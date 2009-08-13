@@ -1,0 +1,6 @@
+; $Id$
+name = Simplenews Newsletter Generator
+description = Generates a simplenews newsletter from a specific content type
+dependencies[] = simplenews
+package = Mail
+core = 6.x

@@ -1,0 +1,39 @@
+<?php
+
+function simplenews_newsletter_generator_install() {
+
+    drupal_install_schema('simplenews_newsletter_generator');
+
+}
+
+function simplenews_newsletter_generator_uninstall() {
+    
+    drupal_uninstall_schema('simplenews_newsletter_generator');
+    
+}
+
+function simplenews_newsletter_generator_schema() {
+    
+    $schema['simplenews_newsletter_generator_used_nids'] = array(
+        
+            'description'   =>  t('Stores nids that have been used in a newsletter'),
+            'fields'        => array(
+                
+                    'id'    =>  array(
+                            // @todo make primary key and auto_increment
+                            'type'          =>  'int',
+                            'description'   =>  t('table primary key')
+                        ),
+                    'nid'   =>  array(
+                            // @todo make unique
+                            'type'          =>  'int',
+                            'description'   =>  t('the nid of the used nid')
+                        )
+                        
+                    // @todo add used date and time
+                )
+        
+        );
+        
+    return $schema;
+}

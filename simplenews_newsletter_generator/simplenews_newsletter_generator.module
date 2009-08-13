@@ -1,0 +1,138 @@
+<?php
+// $Id$
+
+/**
+ * @file
+ * TODO: Write a module
+ */
+
+/**
+ * Implementation of hook_menu().
+ */
+function simplenews_newsletter_generator_menu() { 
+  // This is the minimum information you can provide for a menu item.
+  $items['simplenews/generator'] = array(
+    'title' => 'Generate Newsletter',
+    'page callback' => 'simplenews_newsletter_generator_generate',
+    'access arguments' => array(TRUE),
+  );
+
+  return $items;
+}
+
+
+/**
+ * generate the newsletter shite
+ *
+ * 
+ * @author rachel@netdojo.co.uk
+ */
+function simplenews_newsletter_generator_generate() {
+    
+    // Load all unsent news articles
+    $query = "SELECT node.nid AS nid FROM {node} LEFT JOIN simplenews_newsletter_generator_used_nids ON {node.nid} = {simplenews_newsletter_generator_used_nids.nid} WHERE {simplenews_newsletter_generator_used_nids.nid} IS NULL AND node.type = 'story'";
+    $result = db_query($query);
+    
+    
+    
+    $newsletter = array(
+        'title' => 'Newsletter ' . date('d M y'),
+        'body'  => '',
+        'type'  => 'simplenews' // @TODO Change to correct node type for newsletter
+        );
+    
+    while($row = db_fetch_object($result)) {
+        
+        $node = node_load($row->nid);
+
+        $articles[] =
+        
+        array(
+            'link'      =>  '[' . url('node/' . $node->nid, array('absolute' => true)) . ']',
+            'title'     =>  $node->title,
+            'teaser'    =>  $node->teaser,
+            'created'   =>  $node->created,
+            'type'      =>  $node->type
+            );      
+       
+        simplenews_newsletter_generator_set_used($row->nid);
+        
+    }
+    
+    if(count($articles) < 1) {
+        
+        drupal_set_message( 'No new articles fool', 'error');
+        return '';
+    } else {
+        
+        drupal_set_message('Added newsletter ' . $newsletter['title']);
+        drupal_set_message('Added ' . count($articles) . ' articles');
+    }
+
+
+    // Build the newsletter body
+    foreach ($articles as $key) {
+
+        $body .= theme('story_txt',$key);
+
+    } 
+
+    $newsletter['body'] = $body;
+    
+    
+    $node = node_submit($newsletter);
+    
+    node_save($node);
+    
+    $earl = '<a href="'.url("node/{$node->nid}/edit", array('absolute' => true)).'">Edit Newsletter</a>' ;
+    $earl.= ' | <a href="'.url("node/{$node->nid}", array('absolute' => true)).'">View Newsletter</a>' ;
+    
+    
+    return $earl;
+    
+}
+
+
+/**
+ * simplenews_newsletter_generator_theme
+ * 
+ * Introduce this module to some template files
+ *
+ * @author rachel@netdojo.co.uk
+ * @return array, templates
+ */
+function simplenews_newsletter_generator_theme() {
+
+    return array(
+            'story_txt' => array(
+                'template' => 'story-txt',
+                'arguments' => array('title', 'link', 'teaser')                                                     
+                ),
+            'story_html' => array(
+                'template' => 'story-html',
+                'arguments' => array('title' => NULL, 'link' => NULL, 'teaser' => NULL)                                                     
+                )
+            );
+}
+
+
+function template_preprocess_story_txt(&$variables) {
+    $variables['title'] = $variables[0]['title'];
+    $variables['teaser'] = $variables[0]['teaser'];
+    $variables['link'] = $variables[0]['link'];
+
+}
+
+/**
+ * Mark a nid being used in the newsletter as used to prevent it being used again
+ * 
+ * @param int $nid, Node ID
+ * @author rachel@netdojo.co.uk
+ */
+ function simplenews_newsletter_generator_set_used($nid) {
+    
+     $query = "INSERT INTO {simplenews_newsletter_generator_used_nids} (id,nid) VALUES (null,%d)";
+     db_query($query,$nid);
+     
+ }
+
