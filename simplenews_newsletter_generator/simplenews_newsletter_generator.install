@@ -1,5 +1,18 @@
 <?php
 
+/**
+ * @file
+ * 
+ *
+ * 
+ * 
+ *
+ * All Simplenews Generator code is released under the 
+ * GNU General Public License.
+ * See COPYRIGHT.txt and LICENSE.txt.
+ */
+
+
 function simplenews_newsletter_generator_install() {
 
     drupal_install_schema('simplenews_newsletter_generator');

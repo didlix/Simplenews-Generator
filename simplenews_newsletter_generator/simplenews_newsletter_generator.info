@@ -1,4 +1,9 @@
 ; $Id$
+; All Simplenews Generator code is released under the 
+; GNU General Public License.
+; See COPYRIGHT.txt and LICENSE.txt.
+ 
+
 name = Simplenews Newsletter Generator
 description = Generates a simplenews newsletter from a specific content type
 dependencies[] = simplenews
