@@ -22,7 +22,7 @@ function simplenews_newsletter_generator_menu() {
 
 
 /**
- * generate the newsletter shite
+ * generate the newsletter
  *
  * 
  * @author rachel@netdojo.co.uk
@@ -61,7 +61,7 @@ function simplenews_newsletter_generator_generate() {
     
     if(count($articles) < 1) {
         
-        drupal_set_message( 'No new articles fool', 'error');
+        drupal_set_message( 'No new articles', 'error');
         return '';
     } else {
         
